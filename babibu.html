@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #202124;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Browser Top Bar */
+    .browser-bar {
+      background-color: #f1f3f4;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #dadce0;
+      font-size: 14px;
+      color: #5f6368;
+    }
+
+    .browser-url {
+      background-color: #ffffff;
+      flex: 1;
+      margin: 0 10px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: 1px solid #dfe1e5;
+      font-size: 13px;
+      color: #202124;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tab-badge {
+      border: 1.5px solid #5f6368;
+      border-radius: 4px;
+      padding: 0 4px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* 1. HALAMAN UTAMA GOOGLE */
+    #home-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 80px;
+      flex: 1;
+    }
+
+    .google-logo-main {
+      font-size: 64px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      letter-spacing: -2px;
+    }
+
+    .g-blue { color: #4285F4; }
+    .g-red { color: #EA4335; }
+    .g-yellow { color: #FBBC05; }
+    .g-green { color: #34A853; }
+
+    .home-search-box {
+      width: 90%;
+      max-width: 500px;
+      background: #f1f3f4;
+      border-radius: 28px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .home-search-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 16px;
+      color: #202124;
+    }
+
+    .pill-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .action-pill {
+      background-color: #f1f3f4;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+      color: #3c4043;
+      cursor: pointer;
+    }
+
+    /* 2. HALAMAN HASIL PENCARIAN */
+    #results-page {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      flex: 1;
+    }
+
+    .results-top {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      gap: 12px;
+      border-bottom: 1px solid #f1f3f4;
+    }
+
+    .results-logo {
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: -1px;
+      cursor: pointer;
+    }
+
+    .results-search-box {
+      flex: 1;
+      border: 1px solid #dfe1e5;
+      border-radius: 24px;
+      padding: 8px 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .results-search-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    /* Tab Bar */
+    .tabs-bar {
+      display: flex;
+      gap: 20px;
+      padding: 0 15px;
+      border-bottom: 1px solid #ebebeb;
+      font-size: 14px;
+      color: #5f6368;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .tab {
+      padding: 12px 2px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab.active {
+      color: #1a0dab;
+      border-bottom: 3px solid #1a0dab;
+      font-weight: 600;
+    }
+
+    .main-results {
+      padding: 15px;
+      max-width: 700px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Tab Content Control */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Ringkasan AI */
+    .ai-overview {
+      background: #f8f9fa;
+      border: 1px solid #dadce0;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .ai-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #1a73e8;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .ai-text {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Result Items */
+    .result-item {
+      margin-bottom: 24px;
+    }
+
+    .result-source-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .source-icon {
+      width: 18px;
+      height: 18px;
+      background: #1a73e8;
+      color: #fff;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: bold;
+    }
+
+    .result-url {
+      font-size: 12px;
+      color: #202124;
+    }
+
+    .result-title {
+      font-size: 18px;
+      color: #1a0dab;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 6px;
+      cursor: pointer;
+      line-height: 1.3;
+    }
+
+    .result-title:hover {
+      text-decoration: underline;
+    }
+
+    .result-snippet {
+      font-size: 14px;
+      color: #4d5156;
+      line-height: 1.5;
+    }
+
+    .photo-card {
+      margin-top: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #dadce0;
+      max-width: 320px;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-caption {
+      background-color: #f1f3f4;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #5f6368;
+    }
+
+    /* Grid Gambar Khusus Tab Gambar */
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .image-grid img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #dadce0;
+    }
+
+    /* Player Video YouTube Container */
+    .video-card {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      margin-top: 10px;
+      border: 1px solid #dadce0;
+    }
+
+    .video-card iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* MODAL / POP-UP PEMBUKA WEBSITE & BERITA */
+    .web-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      z-index: 9999;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      background: #f8f9fa;
+      padding: 12px 16px;
+      border-bottom: 1px solid #dadce0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+    }
+
+    .modal-close-btn {
+      background: #e8f0fe;
+      color: #1a73e8;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .article-content {
+      padding: 20px 16px;
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .article-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .article-meta {
+      font-size: 12px;
+      color: #5f6368;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .article-img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .article-body {
+      font-size: 16px;
+      color: #3c4043;
+    }
+
+    .article-body p {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BROWSER TOP BAR -->
+  <div class="browser-bar">
+    <span>🔒</span>
+    <div class="browser-url" id="browser-url-text">google.com</div>
+    <div><span class="tab-badge">12</span> ⋮</div>
+  </div>
+
+  <!-- 1. HALAMAN UTAMA GOOGLE -->
+  <div id="home-page">
+    <div class="google-logo-main">
+      <span class="g-blue">G</span><span class="g-red">o</span><span class="g-yellow">o</span><span class="g-blue">g</span><span class="g-green">l</span><span class="g-red">e</span>
+    </div>
+    
+    <div class="home-search-box">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      <input type="text" id="main-search-input" placeholder="Telusuri Google atau ketik URL" onkeypress="handleKeyPress(event)">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/></svg>
+    </div>
+
+    <div class="pill-container">
+      <button class="action-pill" onclick="executeSearch()">✨ Mode AI</button>
+      <button class="action-pill" onclick="executeSearch()">🕵️ Samaran</button>
+    </div>
+  </div>
+
+  <!-- 2. HALAMAN HASIL PENCARIAN -->
+  <div id="results-page">
+    <div class="results-top">
+      <div class="results-logo" onclick="goHome()">
+        <span class="g-blue">G</span><span class="g-red">o</span><span class="g-yellow">o</span><span class="g-blue">g</span><span class="g-green">l</span><span class="g-red">e</span>
+      </div>
+      <div class="results-search-box">
+        <input type="text" id="results-search-input" onkeypress="handleKeyPress(event)">
+      </div>
+    </div>
+
+    <!-- TAB BAR -->
+    <div class="tabs-bar">
+      <div class="tab active" onclick="switchTab('all', this)">Semua</div>
+      <div class="tab" onclick="switchTab('images', this)">Gambar</div>
+      <div class="tab" onclick="switchTab('videos', this)">Video</div>
+      <div class="tab" onclick="switchTab('news', this)">Berita</div>
+    </div>
+
+    <div class="main-results">
+      
+      <!-- TAB 1: SEMUA -->
+      <div id="tab-all" class="tab-content active">
+        
+        <div class="ai-overview">
+          <div class="ai-header">
+            <span>✨ Ringkasan AI</span>
+            <span>🔊</span>
+          </div>
+          <div class="ai-text">
+            Berdasarkan jutaan data pencarian global, gelar <strong>wanita tercantik di dunia</strong> dipegang oleh <strong class="crush-name-text">[Nama Gebetan]</strong>. Senyuman alaminya terbukti menjadi alasan utama keindahannya.
+          </div>
+        </div>
+
+        <!-- WEB 1 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">B</div><div class="result-url">https://www.global-beauty-awards.com</div></div>
+          <div class="result-title" onclick="openArticle(1)">RESMI: <span class="crush-name-text">[Nama Gebetan]</span> Dinobatkan Sebagai Wanita Tercantik di Dunia</div>
+          <div class="result-snippet">Pencarian resmi tahun ini telah diumumkan. Tidak ada keraguan lagi bahwa ia menjadi pusat perhatian dunia berkat pesonanya.</div>
+          <div class="photo-card">
+            <img class="main-card-photo" src="" alt="Foto">
+            <div class="photo-caption">Dokumentasi resmi pemenang wanita tercantik dunia.</div>
+          </div>
+        </div>
+
+        <!-- WEB 2 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">H</div><div class="result-url">https://www.harpersbazaar.co.id › profil</div></div>
+          <div class="result-title" onclick="openArticle(2)">10 Alasan Mengapa Senyuman <span class="crush-name-text">[Nama Gebetan]</span> Bikin Meleleh</div>
+          <div class="result-snippet">Para peneliti kecantikan mencatat bahwa senyuman uniknya memiliki efek menenangkan dan langsung membuat bahagia.</div>
+        </div>
+
+        <!-- WEB 3 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">V</div><div class="result-url">https://www.vogue.com › beauty-icon</div></div>
+          <div class="result-title" onclick="openArticle(3)">Vogue Beauty Icon: Keindahan Alami Seorang <span class="crush-name-text">[Nama Gebetan]</span></div>
+          <div class="result-snippet">Inspirasi kecantikan tanpa riasan berlebihan, membuktikan pesona sejati datang dari dalam diri dan senyuman yang tulus.</div>
+        </div>
+
+        <!-- WEB 4 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">D</div><div class="result-url">https://www.detik.com › edisi-spesial</div></div>
+          <div class="result-title" onclick="openArticle(4)">Heboh Jagat Maya: Sosok <span class="crush-name-text">[Nama Gebetan]</span> Curi Perhatian Publik</div>
+          <div class="result-snippet">Netizen sepakat bahwa kehadirannya selalu berhasil mencerahkan hari-orang di sekitarnya.</div>
+        </div>
+
+        <!-- WEB 5 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">C</div><div class="result-url">https://www.cnnindonesia.com › gaya-hidup</div></div>
+          <div class="result-title" onclick="openArticle(5)">Survei Global: 99.9% Orang Kangen Kalau Seharian Tidak Sapa <span class="crush-name-text">[Nama Gebetan]</span></div>
+          <div class="result-snippet">Hasil jajak pendapat menunjukkan tingkat kerinduan publik meningkat pesat saat ia tidak ada kabar.</div>
+        </div>
+
+        <!-- WEB 6 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">K</div><div class="result-url">https://www.kompas.com › tren</div></div>
+          <div class="result-title" onclick="openArticle(6)">Fakta Unik: Cara <span class="crush-name-text">[Nama Gebetan]</span> Bikin Suasana Jadi Seru</div>
+          <div class="result-snippet">Simak rangkuman kebiasaan lucu dan menggemaskan yang bikin orang di sekitarnya selalu betah.</div>
+        </div>
+
+        <!-- WEB 7 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">N</div><div class="result-url">https://www.nationalgeographic.grid.id › mystery</div></div>
+          <div class="result-title" onclick="openArticle(7)">Misteri Keindahan: Kenapa Tatapan <span class="crush-name-text">[Nama Gebetan]</span> Sangat Meneduhkan?</div>
+          <div class="result-snippet">Analisis ilmiah mengenai pancaran energi positif dari sosok yang sangat spesial ini.</div>
+        </div>
+
+        <!-- WEB 8 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">T</div><div class="result-url">https://www.tribunnews.com › seleb</div></div>
+          <div class="result-title" onclick="openArticle(8)">Kisah Di Balik Sosok <span class="crush-name-text">[Nama Gebetan]</span> Yang Baik Hati</div>
+          <div class="result-snippet">Bukan cuma parasnya yang cantik, kebaikan hatinya juga membuat semua orang kagum.</div>
+        </div>
+
+        <!-- WEB 9 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">M</div><div class="result-url">https://www.misteri-dunia.com › fakta</div></div>
+          <div class="result-title" onclick="openArticle(9)">Terungkap! Alasan Seseorang Selalu Memikirkan <span class="crush-name-text">[Nama Gebetan]</span> Setiap Hari</div>
+          <div class="result-snippet">Studi psikologi mengungkapkan bayangan wajah cantiknya memang sulit dilupakan.</div>
+        </div>
+
+        <!-- WEB 10 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">S</div><div class="result-url">https://www.spesial-untukmu.com › story</div></div>
+          <div class="result-title" onclick="openArticle(10)">Pesan Rahasia: Seseorang Diam-diam Sangat Mengagumi <span class="crush-name-text">[Nama Gebetan]</span></div>
+          <div class="result-snippet">Klik artikel ini untuk membaca pesan tersembunyi yang ditulis khusus untukmu!</div>
+        </div>
+
+      </div>
+
+      <!-- TAB 2: GAMBAR (6 Slot Foto) -->
+      <div id="tab-images" class="tab-content">
+        <h3 style="margin-bottom: 12px; font-size: 16px; color: #5f6368;">Hasil Gambar untuk <span class="crush-name-text">[Nama Gebetan]</span></h3>
+        <div class="image-grid" id="image-gallery">
+          <!-- Gambar akan dirender otomatis melalui JavaScript -->
+        </div>
+      </div>
+
+      <!-- TAB 3: VIDEO (Link & Embed YouTube Playable) -->
+      <div id="tab-videos" class="tab-content">
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon" style="background:#ff0000;">Y</div><div class="result-url">https://www.youtube.com › watch</div></div>
+          <div class="result-title">Video Spesial: Definisi Kecantikan Sejati Seorang <span class="crush-name-text">[Nama Gebetan]</span></div>
+          <div class="result-snippet">Putar video favorit/lagu romantis spesial berikut langsung dari YouTube!</div>
+          
+          <!-- Pemutar Video YouTube -->
+          <div class="video-card">
+            <iframe id="youtube-player" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: BERITA (Setiap Berita Bisa Diklik dan Dibuka) -->
+      <div id="tab-news" class="tab-content">
+        <h3 style="margin-bottom: 15px; font-size: 16px; color: #5f6368;">Berita Utama Hari Ini</h3>
+        
+        <!-- Berita 1 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">D</div><div class="result-url">https://www.detik.com › berita-utama</div></div>
+          <div class="result-title" onclick="openArticle(4)">Headline Hari Ini: Pesona <span class="crush-name-text">[Nama Gebetan]</span> Curi Perhatian Publik</div>
+          <div class="result-snippet">Berita hangat mengenai bagaimana kehadirannya selalu berhasil mencerahkan hari orang-orang di sekitarnya.</div>
+        </div>
+
+        <!-- Berita 2 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">C</div><div class="result-url">https://www.cnnindonesia.com › kabar-terbaru</div></div>
+          <div class="result-title" onclick="openArticle(5)">Laporan Khusus: Senyuman <span class="crush-name-text">[Nama Gebetan]</span> Jadi Trending Topik Nomor 1</div>
+          <div class="result-snippet">Banyak orang merasa hari mereka jadi lebih indah hanya dengan melihat senyuman bahagianya.</div>
+        </div>
+
+        <!-- Berita 3 -->
+        <div class="result-item">
+          <div class="result-source-row"><div class="source-icon">K</div><div class="result-url">https://www.kompas.com › edisi-terkini</div></div>
+          <div class="result-title" onclick="openArticle(6)">Kabar Terkini: Kebiasaan Lucu <span class="crush-name-text">[Nama Gebetan]</span> Yang Bikin Nagih</div>
+          <div class="result-snippet">Ringkasan cerita unik serta momen manis saat menghabiskan waktu bersamanya.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL / POP-UP PEMBUKA ARTIKEL WEB & BERITA -->
+  <div id="web-modal" class="web-modal">
+    <div class="modal-header">
+      <span id="modal-site-name" style="font-size:13px; font-weight:bold; color:#5f6368;">Situs Berita</span>
+      <button class="modal-close-btn" onclick="closeArticle()">← Kembali ke Google</button>
+    </div>
+    <div class="article-content">
+      <div class="article-title" id="modal-article-title">Judul Artikel</div>
+      <div class="article-meta" id="modal-article-meta">Dipublikasikan Hari Ini • Oleh Redaksi Spesial</div>
+      <img id="modal-article-img" class="article-img" src="" alt="Gambar Artikel">
+      <div class="article-body" id="modal-article-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // KONFIGURASI NAMA, FOTO, DAN VIDEO YOUTUBE
+    // ==========================================
+    const NAMA_GEBETAN = "Nama Gebetanmu"; // Ganti dengan namanya
+
+    // Masukkan hingga 6 foto gebetan kamu di sini (URL gambar)
+    const FOTO_GEBETAN_LIST = [
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500", // Foto 1 (Sampul Utama)
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500", // Foto 2
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500", // Foto 3
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500", // Foto 4
+      "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500", // Foto 5
+      "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=500"  // Foto 6
+    ];
+
+    // Ganti ID video YouTube di bawah ini (misal ID dari video lagu romantis)
+    // Contoh link: https://www.youtube.com/watch?v=dQw4w9WgXcQ -> ID-nya adalah dQw4w9WgXcQ
+    const YOUTUBE_VIDEO_ID = "dQw4w9WgXcQ"; 
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Set Foto Utama
+      const mainPhoto = document.querySelector('.main-card-photo');
+      if (mainPhoto) mainPhoto.src = FOTO_GEBETAN_LIST[0];
+
+      // 2. Render Gallery 6 Slot Foto di Tab Gambar
+      const galleryContainer = document.getElementById('image-gallery');
+      galleryContainer.innerHTML = "";
+      FOTO_GEBETAN_LIST.forEach((url, idx) => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = `Foto ${idx + 1}`;
+        galleryContainer.appendChild(img);
+      });
+
+      // 3. Set Video YouTube
+      document.getElementById('youtube-player').src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`;
+
+      // 4. Masukkan Nama Gebetan ke Seluruh Teks
+      const nameElements = document.querySelectorAll('.crush-name-text');
+      nameElements.forEach(el => el.innerText = NAMA_GEBETAN);
+    });
+
+    function executeSearch() {
+      let query = document.getElementById('main-search-input').value;
+      if (!query) query = "wanita tercantik di dunia";
+      
+      document.getElementById('home-page').style.display = 'none';
+      document.getElementById('results-page').style.display = 'flex';
+      document.getElementById('results-search-input').value = query;
+      document.getElementById('browser-url-text').innerText = "google.com/search?q=" + encodeURIComponent(query);
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') executeSearch();
+    }
+
+    function goHome() {
+      document.getElementById('results-page').style.display = 'none';
+      document.getElementById('home-page').style.display = 'flex';
+      document.getElementById('browser-url-text').innerText = "google.com";
+    }
+
+    function switchTab(tabName, element) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      element.classList.add('active');
+      document.getElementById('tab-' + tabName).classList.add('active');
+    }
+
+    // ISI DARI WEBSITE & BERITA YANG BISA DIKLIK
+    const articlesData = {
+      1: {
+        site: "Global Beauty Awards",
+        title: `RESMI: ${NAMA_GEBETAN} Dinobatkan Sebagai Wanita Tercantik di Dunia`,
+        body: `<p>Dunia telah menentukan pilihannya. Dalam pengumuman resmi tahun ini, nama <strong>${NAMA_GEBETAN}</strong> secara mutlak menduduki peringkat pertama sebagai wanita tercantik.</p><p>Dewan juri mengungkapkan bahwa kriteria utama penilaian tahun ini bukan sekadar visual, melainkan energi positif dan senyuman alami yang dimiliki oleh ${NAMA_GEBETAN}.</p>`
+      },
+      2: {
+        site: "Harper's Bazaar",
+        title: `10 Alasan Mengapa Senyuman ${NAMA_GEBETAN} Bikin Meleleh`,
+        body: `<p>Tidak bisa dimungkiri, saat ${NAMA_GEBETAN} tersenyum, suasana di sekitarnya seketika berubah jadi lebih hangat dan menyenangkan.</p><p>Banyak yang mengaku bahwa melihat fotonya saja sudah cukup untuk mengobati hari yang lelah.</p>`
+      },
+      3: {
+        site: "Vogue Magazine",
+        title: `Vogue Beauty Icon: Keindahan Alami Seorang ${NAMA_GEBETAN}`,
+        body: `<p>Dalam edisi khusus kali ini, Vogue mengangkat kisah tentang pesona autentik. ${NAMA_GEBETAN} menjadi contoh nyata bahwa kecantikan sejati terpancar dari kebaikan hati dan menjadi diri sendiri.</p>`
+      },
+      4: {
+        site: "Detik News",
+        title: `Heboh Jagat Maya: Sosok ${NAMA_GEBETAN} Curi Perhatian`,
+        body: `<p>Trending topik hari ini diisi oleh perbincangan hangat netizen mengenai sosok <strong>${NAMA_GEBETAN}</strong>. Banyak yang memuji kepribadiannya yang ramah dan menggemaskan.</p>`
+      },
+      5: {
+        site: "CNN Indonesia",
+        title: `Survei: 99.9% Orang Kangen Kalau Seharian Tidak Sapa ${NAMA_GEBETAN}`,
+        body: `<p>Penelitian terbaru menunjukkan bahwa kehadiran <strong>${NAMA_GEBETAN}</strong> sangat dirindukan. Bagi seseorang yang sedang mengaguminya, tidak ada kabar darinya seharian rasanya seperti ada yang kurang!</p>`
+      },
+      6: {
+        site: "Kompas Tren",
+        title: `Fakta Unik: Cara ${NAMA_GEBETAN} Bikin Suasana Jadi Seru`,
+        body: `<p>Setiap kali <strong>${NAMA_GEBETAN}</strong> hadir, cerita-cerita kecil selalu menjadi lebih berwarna. Tingkah lucunya selalu berhasil bikin tersenyum.</p>`
+      },
+      7: {
+        site: "National Geographic",
+        title: `Misteri Keindahan: Kenapa Tatapan ${NAMA_GEBETAN} Meneduhkan?`,
+        body: `<p>Tatapan mata yang jujur dan tulus memiliki dampak psikologis yang menenangkan. Hal itulah yang terpancar jelas dari sosok ${NAMA_GEBETAN}.</p>`
+      },
+      8: {
+        site: "Tribun News",
+        title: `Kisah Di Balik Sosok ${NAMA_GEBETAN} Yang Baik Hati`,
+        body: `<p>Selain memiliki paras yang cantik, keramahan dan perhatian yang ia berikan kepada orang lain membuatnya dicintai banyak orang.</p>`
+      },
+      9: {
+        site: "Misteri Dunia",
+        title: `Terungkap! Alasan Seseorang Selalu Memikirkan ${NAMA_GEBETAN}`,
+        body: `<p>Apakah kamu sering kepikiran dia? Itu adalah hal yang sangat wajar karena pesona ${NAMA_GEBETAN} memang melekat kuat di ingatan!</p>`
+      },
+      10: {
+        site: "Pesan Spesial",
+        title: `Pesan Rahasia Untuk ${NAMA_GEBETAN}`,
+        body: `<p>Hai <strong>${NAMA_GEBETAN}</strong>! 👋</p><p>Sebenarnya seluruh halaman Google ini dibuat khusus hanya untukmu. Terima kasih ya sudah menjadi sosok yang selalu mencerahkan hari dan membuat tersenyum!</p><p><em>- Dari seseorang yang mengagumimu 🙂</em></p>`
+      }
+    };
+
+    function openArticle(id) {
+      const data = articlesData[id];
+      if (data) {
+        document.getElementById('modal-site-name').innerText = data.site;
+        document.getElementById('modal-article-title').innerText = data.title;
+        document.getElementById('modal-article-img').src = FOTO_GEBETAN_LIST[0];
+        document.getElementById('modal-article-body').innerHTML = data.body;
+        document.getElementById('web-modal').style.display = 'flex';
+      }
+    }
+
+    function closeArticle() {
+      document.getElementById('web-modal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
